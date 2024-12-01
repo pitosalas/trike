@@ -5,7 +5,6 @@ import constants
 import asyncio
 
 
-
 class Trike:
     def __init__(self):
         self.fact = PiGPIOFactory()
@@ -72,10 +71,10 @@ class Trike:
         await asyncio.sleep(duration)
         self.raw_stop_drive.stop()
 
-    async def constant_beep(self, buzzer, duration):
-        self.buzzer.play('A4')
+    async def constant_beep(self, duration):
+        self.buzzer.on()
         await asyncio.sleep(duration)
-        buzzer.stop()
+        self.buzzer.off()
 
 async def main(t: Trike):
     # First section: concurrent beeping and moving
@@ -85,7 +84,7 @@ async def main(t: Trike):
     )
 
     # Second section: just beeping
-    await t.constant_beep(buzzer, 5)
+    await t.constant_beep(5)
 
 if __name__ == "__main__":
     t = Trike()
