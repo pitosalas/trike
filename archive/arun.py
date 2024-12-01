@@ -1,11 +1,9 @@
 from gpiozero.pins.pigpio import PiGPIOFactory
 from gpiozero import Buzzer, Servo, Motor
-from time import sleep
 import constants
-import asyncio
 
 
-class Harware:
+class Hardware:
     def __init__(self):
         self.fact = PiGPIOFactory()
         self.buzzer = Buzzer(
@@ -55,7 +53,7 @@ class Harware:
         self.buzzer.off()
 
 class ATrike:
-    def __init__(self, h: Harware):
+    def __init__(self, h: Hardware):
         self.hardware = h
 
     async def beep_every_second(self, duration):
@@ -81,21 +79,20 @@ class ATrike:
 
     async def main(self):
         # section: center streering
-        await self.hardware.set_steering(constants.SERVO_MID)
+        await self.set_steering(constants.SERVO_MID)
 
         # section: concurrent beeping and moving
         await asyncio.gather(
-            self.hardware.beep_every_second(5),
-            self.hardware.move_forward(0.15, 5)
+            self.beep_every_second(5),
+            self.move_forward(0.15, 5)
         )
         # section: just beeping
-        await self.hardware.constant_beep(1)
+        await self.constant_beep(1)
 
         # section turn wheel sharply and slow down
-        await self.hardware.set_steering(constants.SERVO_LEFT)
-        await self.hardware.move_forward(0.15, 15)
+        await self.set_steering(constants.SERVO_LEFT)
+        await self.move_forward(0.15, 5)
         
-
 if __name__ == "__main__":
     hardware = Hardware()
     trike = ATrike(hardware)
