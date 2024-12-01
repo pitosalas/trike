@@ -5,7 +5,7 @@ import constants
 import asyncio
 
 
-class Trike:
+class Harware:
     def __init__(self):
         self.fact = PiGPIOFactory()
         self.buzzer = Buzzer(
@@ -33,11 +33,6 @@ class Trike:
     def reset(self):
         pass
 
-    def raw_drive(self, dir: bool, pwm: float):
-        self.start_drive(dir, pwm)
-        sleep(1)
-        self.stop_drive(dir, pwm)
-
     def raw_start_drive(self, dir: bool, pwm: float):
         if dir:
             self.left.forward(pwm)
@@ -46,47 +41,63 @@ class Trike:
             self.left.backward(pwm)
             self.right.backward(pwm)
     
-    def raw_stop_drive(self, dir, pwm): 
+    def raw_stop_drive(self): 
         self.left.stop()
         self.right.stop()
 
     def raw_steer(self, pwm: float):
         self.servo.value = pwm
 
-    def raw_beep(self, time: float):
+    def raw_buzzer_on(self):
         self.buzzer.on()
-        sleep(time)
+
+    def raw_buzzer_off(self):
         self.buzzer.off()
+
+class ATrike:
+    def __init__(self, h: Harware):
+        self.hardware = h
 
     async def beep_every_second(self, duration):
         end_time = asyncio.get_event_loop().time() + duration
         while asyncio.get_event_loop().time() < end_time:
-            self.buzzer.on()
+            self.hardware.buzzer.on()
             await asyncio.sleep(0.1)  # Short beep
-            self.buzzer.off()
+            self.hardware.buzzer.off()
             await asyncio.sleep(0.9)  # Wait for remainder of second
 
     async def move_forward(self, speed, duration):
-        self.raw_start_drive(True, speed)
+        self.hardware.raw_start_drive(True, speed)
         await asyncio.sleep(duration)
-        self.raw_stop_drive.stop()
+        self.hardware.raw_stop_drive()
 
     async def constant_beep(self, duration):
-        self.buzzer.on()
+        self.hardware.buzzer.on()
         await asyncio.sleep(duration)
-        self.buzzer.off()
+        self.hardware.buzzer.off()
 
-async def main(t: Trike):
-    # First section: concurrent beeping and moving
-    await asyncio.gather(
-        t.beep_every_second(5),
-        t.move_forward(0.5, 5)
-    )
+    async def set_steering(self, pwm):
+        self.hardware.servo.value = pwm
 
-    # Second section: just beeping
-    await t.constant_beep(5)
+    async def main(self):
+        # section: center streering
+        await self.hardware.set_steering(constants.SERVO_MID)
+
+        # section: concurrent beeping and moving
+        await asyncio.gather(
+            self.hardware.beep_every_second(5),
+            self.hardware.move_forward(0.15, 5)
+        )
+        # section: just beeping
+        await self.hardware.constant_beep(1)
+
+        # section turn wheel sharply and slow down
+        await self.hardware.set_steering(constants.SERVO_LEFT)
+        await self.hardware.move_forward(0.15, 15)
+        
 
 if __name__ == "__main__":
-    t = Trike()
-    asyncio.run(main(t))
+    hardware = Hardware()
+    trike = ATrike(hardware)
+    asyncio.run(trike.main())
 
