@@ -20,6 +20,6 @@ LEFT_PWM = "BCM16"  # Left Motor PWM
 RIGHT_PWM = "BCM13"  # Right Motor PWM
 
 # Ultrasonic Sensor Pins
-ECHO_PIN = "BCM0"
-TRIG_PIN = "BCM1"
+ECHO_PIN = 0
+TRIG_PIN = 1
 

@@ -1,7 +1,8 @@
 from gpiozero.pins.pigpio import PiGPIOFactory
 from gpiozero import Buzzer, Servo, Motor
 import constants
-
+import RPi.GPIO as GPIO
+import time
 
 class Hardware:
     def __init__(self):
@@ -51,3 +52,26 @@ class Hardware:
 
     def raw_buzzer_off(self):
         self.buzzer.off()
+
+    def distance(self):
+        GPIO.output(constants.TRIG_PIN,GPIO.LOW)
+        time.sleep(0.000001)  # One micro second
+        GPIO.output(constants.TRIG_PIN,GPIO.HIGH)
+        time.sleep(0.000001)  # One micro second
+        GPIO.output(constants.TRIG_PIN,GPIO.LOW)
+        start_waiting_for_echo = time.time()
+        while not GPIO.input(constants.ECHO_PIN):
+            waiting_for_echo = time.time()
+            if (waiting_for_echo - start_waiting_for_echo) > 0.03 :
+                return -1 # time-out
+
+        echo_start = time.time()
+        while GPIO.input(constants.ECHO_PIN):
+            waiting_for_echo_end = time.time()
+            if(waiting_for_echo_end - echo_start) > 0.03 :
+                return -1 # time out
+
+        echo_end = time.time()
+        echo_duration = echo_end - echo_start
+        time.sleep(0.01)
+        return echo_duration * 17150  # Speed of sound * time / 2

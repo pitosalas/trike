@@ -1,6 +1,5 @@
 import RPi.GPIO as GPIO
 import time
-import Gpio
 
 EchoPin = 0
 TrigPin = 1
