@@ -1,6 +1,5 @@
 import asyncio
 from hardware import Hardware
-import constants
 
 
 class ATrike:
@@ -28,7 +27,12 @@ class ATrike:
     async def set_steering(self, pwm):
         self.hardware.servo.value = pwm
 
-if __name__ == "__main__":
-    hardware = Hardware()
-    trike = ATrike(hardware)
-    asyncio.run(trike.main())
+    async def poll_distance(self):
+        try:
+            while True:
+                self.distance = self.hardware.distance()
+                await asyncio.sleep(0.1)                        # Add a small delay to prevent CPU overload
+        except asyncio.CancelledError:
+            # Handle clean shutdown when the task is cancelled
+            pass
+

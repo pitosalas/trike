@@ -28,9 +28,13 @@ class Hardware:
             enable=constants.RIGHT_PWM,
             pin_factory=self.fact,
         )
+        GPIO.setmode(GPIO.BCM)
+        GPIO.setup(constants.ECHO_PIN,GPIO.IN)
+        GPIO.setup(constants.TRIG_PIN,GPIO.OUT)
+
 
     def reset(self):
-        pass
+        GPIO.cleanup()
 
     def raw_start_drive(self, dir: bool, pwm: float):
         if dir:
@@ -63,13 +67,13 @@ class Hardware:
         while not GPIO.input(constants.ECHO_PIN):
             waiting_for_echo = time.time()
             if (waiting_for_echo - start_waiting_for_echo) > 0.03 :
-                return -1 # time-out
+                return -11 # time-out
 
         echo_start = time.time()
         while GPIO.input(constants.ECHO_PIN):
             waiting_for_echo_end = time.time()
-            if(waiting_for_echo_end - echo_start) > 0.03 :
-                return -1 # time out
+            if(waiting_for_echo_end - echo_start) > 0.05 :
+                return -12 # time out
 
         echo_end = time.time()
         echo_duration = echo_end - echo_start
