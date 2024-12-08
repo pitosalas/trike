@@ -23,3 +23,8 @@ RIGHT_PWM = "BCM13"  # Right Motor PWM
 ECHO_PIN = 0
 TRIG_PIN = 1
 
+# Differential Drive Turn
+DIFF_STR = 1
+DIFF_LEFT = 2
+DIFF_RIGHT = 3
+

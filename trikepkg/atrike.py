@@ -15,15 +15,20 @@ class ATrike:
             await asyncio.sleep(0.9)  # Wait for remainder of second
 
     async def move_forward(self, speed, duration):
-        self.hardware.raw_start_drive(True, speed)
+        self.hardware.start_drive(True, speed)
         await asyncio.sleep(duration)
-        self.hardware.raw_stop_drive()
+        self.hardware.stop_drive()
 
     async def constant_beep(self, duration):
         self.hardware.buzzer.on()
         await asyncio.sleep(duration)
         self.hardware.buzzer.off()
-
+    
+    async def diff_drive(self, lin: float, ang: float, dur: float):
+        self.hardware.start_differential_drive(linear=lin, rotation=ang)
+        await asyncio.sleep(dur)
+        self.hardware.stop_drive()
+       
     async def set_steering(self, pwm):
         self.hardware.servo.value = pwm
 

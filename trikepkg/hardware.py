@@ -36,7 +36,7 @@ class Hardware:
     def reset(self):
         GPIO.cleanup()
 
-    def raw_start_drive(self, dir: bool, pwm: float):
+    def start_drive(self, dir: bool, pwm: float):
         if dir:
             self.left.forward(pwm)
             self.right.forward(pwm)
@@ -44,14 +44,30 @@ class Hardware:
             self.left.backward(pwm)
             self.right.backward(pwm)
     
-    def raw_stop_drive(self): 
+    def start_differential_drive(self, linear: float, rotation: float):
+        fwd = linear > 0
+        linear = abs(linear)
+        left_pwm = 0.4
+        right_pwm = 0.4
+        if rotation < 0:
+            left_pwm -= 0.2
+        elif rotation > 0:
+            right_pwm -= 0.2
+        if fwd:
+            self.left.forward(left_pwm)
+            self.right.forward(right_pwm)
+        else:
+            self.left.backward(left_pwm)
+            self.right.backward(right_pwm)
+                                 
+    def stop_drive(self): 
         self.left.stop()
         self.right.stop()
 
     def raw_steer(self, pwm: float):
         self.servo.value = pwm
 
-    def raw_buzzer_on(self):
+    def buzzer_on(self):
         self.buzzer.on()
 
     def raw_buzzer_off(self):
