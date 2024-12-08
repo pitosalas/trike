@@ -71,7 +71,7 @@ class Hardware:
     def buzzer_on(self):
         self.buzzer.on()
 
-    def raw_buzzer_off(self):
+    def buzzer_off(self):
         self.buzzer.off()
 
     def distance(self):

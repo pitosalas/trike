@@ -4,15 +4,35 @@ from hardware import Hardware
 
 class ATrike:
     def __init__(self, h: Hardware):
-        self.hardware = h
+        self.hardware : Hardware = h
+        self.distance : float = 0.0
 
-    async def beep_every_second(self, duration):
+    async def repeat_beep(self, duration):
         end_time = asyncio.get_event_loop().time() + duration
         while asyncio.get_event_loop().time() < end_time:
             self.hardware.buzzer.on()
-            await asyncio.sleep(0.1)  # Short beep
+            await asyncio.sleep(0.05)  # Short beep
             self.hardware.buzzer.off()
             await asyncio.sleep(0.9)  # Wait for remainder of second
+    
+    async def beep_distance(self):
+        while True:
+            if self.distance < 20:
+                await self.repeat_beep(1.0)
+            elif self.distance < 50:
+                await self.repeat_beep(5.0)
+            await asyncio.sleep(0.05)
+
+    async def poll_distance(self):
+        try:
+            while True:
+                self.distance = self.hardware.distance()
+                await asyncio.sleep(0.1) 
+        except asyncio.CancelledError:
+            # Handle clean shutdown when the task is cancelled
+            pass
+
+
 
     async def move_forward(self, speed, duration):
         self.hardware.start_drive(True, speed)
@@ -31,13 +51,4 @@ class ATrike:
        
     async def set_steering(self, pwm):
         self.hardware.servo.value = pwm
-
-    async def poll_distance(self):
-        try:
-            while True:
-                self.distance = self.hardware.distance()
-                await asyncio.sleep(0.1)                        # Add a small delay to prevent CPU overload
-        except asyncio.CancelledError:
-            # Handle clean shutdown when the task is cancelled
-            pass
 
