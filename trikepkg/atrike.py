@@ -25,7 +25,7 @@ class ATrike:
         self.hardware.buzzer.off()
     
     async def diff_drive(self, lin: float, ang: float, dur: float):
-        self.hardware.start_differential_drive(linear=lin, rotation=ang)
+        self.hardware.start_differential_drive(linear=lin, angular=ang)
         await asyncio.sleep(dur)
         self.hardware.stop_drive()
        

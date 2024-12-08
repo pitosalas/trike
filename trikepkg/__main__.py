@@ -19,9 +19,10 @@ async def main(t: ATrike):
 
     await asyncio.gather(
         t.poll_distance(),
-        monitor_and_beep(t),
+    #    monitor_and_beep(t),
     #     # t.beep_every_second(5),
     #     # t.move_forward(0.15, 5)
+    #    t.diff_drive(lin=0.1, ang=-0.1, dur=1)
     )
 
     # # await t.set_steering(constants.SERVO_LEFT)

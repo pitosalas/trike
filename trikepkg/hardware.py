@@ -44,15 +44,16 @@ class Hardware:
             self.left.backward(pwm)
             self.right.backward(pwm)
     
-    def start_differential_drive(self, linear: float, rotation: float):
+    def start_differential_drive(self, linear: float, angular: float):
+        print(f"diff start lin {linear} angular: {angular}")
         fwd = linear > 0
         linear = abs(linear)
-        left_pwm = 0.4
-        right_pwm = 0.4
-        if rotation < 0:
-            left_pwm -= 0.2
-        elif rotation > 0:
-            right_pwm -= 0.2
+        left_pwm = 0.3
+        right_pwm = 0.3
+        if angular < 0:
+            left_pwm -= 0.1
+        elif angular > 0:
+            right_pwm += 0.1
         if fwd:
             self.left.forward(left_pwm)
             self.right.forward(right_pwm)
