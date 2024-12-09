@@ -33,14 +33,6 @@ class ATrike:
             await asyncio.sleep(1) 
           
 
-    async def beep_distance(self):
-        while True:
-            if self.distance < 20:
-                await self.repeat_beep(1.0)
-            elif self.distance < 50:
-                await self.repeat_beep(5.0)
-            await asyncio.sleep(0.05)
-
     async def poll_distance(self):
         try:
             while True:
