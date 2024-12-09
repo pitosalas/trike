@@ -5,22 +5,13 @@ import atexit
 import constants
 
 
-def cleanup():
-    print("Exit")
-
-atexit.register(cleanup)
-
 async def main(t: ATrike):
+    #asyncio.create_task(t.log_distance())
+    asyncio.create_task(t.poll_distance())
+    asyncio.create_task(t.beep_distance1())
     await t.set_steering(constants.SERVO_MID)
-    await asyncio.gather(
-        t.poll_distance(),
-        t.beep_distance()
-    #    monitor_and_beep(t),
-    #     # t.beep_every_second(5),
-    #     # t.move_forward(0.15, 5)
-    #    t.diff_drive(lin=0.1, ang=-0.1, dur=1)
-    )
-
+    await asyncio.Future() # wait indefinitely
+    
     # # await t.set_steering(constants.SERVO_LEFT)
 
     # await t.move_forward(0.15, 5)
@@ -29,8 +20,15 @@ async def main(t: ATrike):
 
 
 if __name__ == "__main__":
-    hardware = Hardware()
-    trike = ATrike(hardware)
-    asyncio.run(main(trike))
-    hardware.reset()
+    try:
+        hardware = Hardware()
+        trike = ATrike(hardware)
+        asyncio.run(main(trike))
+    except KeyboardInterrupt:
+        hardware.reset()
+    except:
+        hardware.reset()
+    finally:
+        hardware.reset()
+    print("Exit Exit")
 

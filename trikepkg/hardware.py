@@ -34,7 +34,8 @@ class Hardware:
 
 
     def reset(self):
-        GPIO.cleanup()
+        self.buzzer_off()
+        self.stop_drive()
 
     def start_drive(self, dir: bool, pwm: float):
         if dir:
@@ -95,4 +96,5 @@ class Hardware:
         echo_end = time.time()
         echo_duration = echo_end - echo_start
         time.sleep(0.01)
-        return echo_duration * 17150  # Speed of sound * time / 2
+        distance = (echo_duration * 17150)  # Speed of sound * time / 2
+        return (distance - 10) # to account for the fact that the front wheel sticks out

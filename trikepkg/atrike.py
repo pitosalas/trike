@@ -15,7 +15,7 @@ class ATrike:
             self.hardware.buzzer.off()
             await asyncio.sleep(0.9)  # Wait for remainder of second
 
-    async def beep_distnace1(self):
+    async def beep_distance1(self):
         while True:
             if self.distance < 50:
                 self.hardware.buzzer.on()
@@ -26,6 +26,12 @@ class ATrike:
                 else:
                     sleep = 2.9
                 await asyncio.sleep(sleep) 
+
+    async def log_distance(self):
+        while True:
+            print(f"Log distance: {self.distance:.2f}")
+            await asyncio.sleep(1) 
+          
 
     async def beep_distance(self):
         while True:
