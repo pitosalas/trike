@@ -13,3 +13,10 @@ Sequence
         beep for 5 seconds
     end
 end
+
+
+if not beeping:
+    store start of interval
+else
+    start beep
+    
